@@ -29,14 +29,49 @@
     layout = "us";
     options = "ctrl:swap_lwin_lctl,ctrl:swap_rwin_rctl"; # swap Super (Cmd) and Ctrl
   };
+
+  # ─── Keyboard layout via dconf (required for Wayland/GNOME to pick it up) ─
+   programs.dconf = {
+     enable = true;
+     profiles.user.databases = [{
+       settings = {
+         "org/gnome/desktop/input-sources" = {
+           sources = [ (lib.gvariant.mkTuple [ (lib.gvariant.mkString "xkb") (lib.gvariant.mkString "us") ]) ];
+           xkb-options = [ "ctrl:swap_lwin_lctl" "ctrl:swap_rwin_rctl" ];
+         };
+       };
+     }];
+   };
   services.displayManager.gdm.enable = true;
   services.displayManager.gdm.wayland = true;
   services.desktopManager.gnome.enable = true;
 
   # Trim default GNOME bloat — remove what you don't want
   environment.gnome.excludePackages = with pkgs; [
+    gnome-tour
     gnome-connections
+    epiphany        # GNOME Web (we're using Firefox)
+    geary           # GNOME Mail
+    gnome-weather
+    gnome-maps
+    gnome-music
   ];
+
+  # Enable the unfree 1Password packages
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "1password-gui"
+    "1password"
+  ];
+  # Alternatively, you could also just allow all unfree packages
+  # nixpkgs.config.allowUnfree = true;
+
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+    # Certain features, including CLI integration and system authentication support,
+    # require enabling PolKit integration on some desktop environments (e.g. Plasma).
+    polkitPolicyOwners = [ "yourUsernameHere" ];
+  };
 
   # ─── System packages ───────────────────────────────────────────────────────
   environment.systemPackages = with pkgs; [
@@ -164,6 +199,7 @@
     extraGroups = [
       "wheel"
       "audio"
+      "docker"
     ];
   };
 
@@ -237,7 +273,7 @@
     inter
     liberation_ttf
   ];
+
+  time.timeZone = "America/Chicago";
+  i18n.extraLocaleSettings.LC_TIME = "en_US.UTF-8";
 }
-
-# ─── Use Macos keyboard layout ───────────────────────────────────
-
