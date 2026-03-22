@@ -25,6 +25,10 @@
 
   # ─── GNOME Desktop ─────────────────────────────────────────────────────────
   services.xserver.enable = true;
+  services.xserver.xkb = {
+    layout = "us";
+    options = "ctrl:swap_lwin_lctl,ctrl:swap_rwin_rctl"; # swap Super (Cmd) and Ctrl
+  };
   services.displayManager.gdm.enable = true;
   services.displayManager.gdm.wayland = true;
   services.desktopManager.gnome.enable = true;
@@ -135,11 +139,6 @@
     };
   };
 
-  # ─── Terminal-─────────────────────────────────────────────────────────────
-  programs.kitty = {
-    enable = true;
-    defaultTerminal = true;
-  };
   # ─── Neovim ───────────────────────────────────────────────────────────────
   programs.neovim = {
     enable = true;
@@ -165,15 +164,6 @@
     extraGroups = [
       "wheel"
       "audio"
-    ];
-  };
-
-  users.users.todd = {
-    isNormalUser = true;
-    shell = pkgs.zsh;        # set zsh as default shell
-    extraGroups = [
-      "wheel"                # sudo
-      "docker"               # run docker without sudo
     ];
   };
 
@@ -248,3 +238,6 @@
     liberation_ttf
   ];
 }
+
+# ─── Use Macos keyboard layout ───────────────────────────────────
+
