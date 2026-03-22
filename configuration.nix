@@ -9,7 +9,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # ─── State version ─────────────────────────────────────────────────────────
+  # ─── State version ────────────────────────────────────────────────────────
   # Set this to the NixOS version you FIRST installed. Do not bump it later —
   # it guards stateful data migrations, not the packages you get.
   system.stateVersion = "25.05";
